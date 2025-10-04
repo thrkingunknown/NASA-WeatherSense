@@ -1,10 +1,3 @@
-/**
- * Weather Query Form Component
- *
- * Main form component for submitting weather queries.
- * Integrates LocationPicker and DatePicker components.
- */
-
 import { useState, useCallback } from "react";
 import { LocationPicker } from "../location/LocationPicker";
 import { DatePicker } from "../date/DatePicker";
@@ -22,7 +15,7 @@ export function WeatherQueryForm({
 }: WeatherQueryFormProps) {
   const [location, setLocation] = useState<Location>({
     type: "point",
-    coordinates: { lat: 38.8830, lon: -77.0163 },
+    coordinates: { lat: 38.883, lon: -77.0163 },
     name: "Mary W Jackson, NASA Headquarters",
   });
 
@@ -34,7 +27,6 @@ export function WeatherQueryForm({
 
   const [errors, setErrors] = useState<string[]>([]);
 
-  // Memoize callbacks to prevent child component re-renders
   const handleLocationChange = useCallback((newLocation: Location) => {
     setLocation(newLocation);
   }, []);
@@ -46,7 +38,6 @@ export function WeatherQueryForm({
   const validateForm = (): boolean => {
     const newErrors: string[] = [];
 
-    // Validate location
     if (location.type === "point") {
       const { lat, lon } = location.coordinates;
       if (lat < -90 || lat > 90) {
@@ -57,7 +48,6 @@ export function WeatherQueryForm({
       }
     }
 
-    // Validate date
     if (date.month < 1 || date.month > 12) {
       newErrors.push("Month must be between 1 and 12");
     }
@@ -82,7 +72,6 @@ export function WeatherQueryForm({
     const query: WeatherQuery = {
       location,
       date,
-      // queryId is optional - omitting it
     };
 
     onSubmit(query);
@@ -99,7 +88,6 @@ export function WeatherQueryForm({
         Select a location and date to get weather likelihood predictions on.
       </p>
 
-      {/* Validation Errors */}
       {errors.length > 0 && (
         <div className="form-errors" role="alert" aria-live="assertive">
           <h4>Please fix the following errors:</h4>
@@ -111,14 +99,12 @@ export function WeatherQueryForm({
         </div>
       )}
 
-      {/* Location Picker */}
       <LocationPicker
         value={location}
         onChange={handleLocationChange}
         label="📍 Event Location"
       />
 
-      {/* Date Picker */}
       <DatePicker
         value={date}
         onChange={handleDateChange}
@@ -126,7 +112,6 @@ export function WeatherQueryForm({
         label="📅 Event Date"
       />
 
-      {/* Submit Button */}
       <div className="form-actions">
         <button
           type="submit"
@@ -150,7 +135,6 @@ export function WeatherQueryForm({
         </button>
       </div>
 
-      {/* Info Box */}
       <div className="form-info">
         <h4>How it works:</h4>
         <ol>

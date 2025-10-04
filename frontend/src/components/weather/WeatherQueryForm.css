@@ -144,6 +144,7 @@
 @media (max-width: 768px) {
   .weather-query-form {
     padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
   }
 
   .form-title {
@@ -153,5 +154,58 @@
   .btn-primary {
     font-size: 1rem;
     padding: var(--spacing-md) var(--spacing-lg);
+  }
+
+  .form-info {
+    padding: var(--spacing-md);
+  }
+
+  .form-info ol {
+    padding-left: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-query-form {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+  }
+
+  .form-title {
+    font-size: 1.25rem;
+  }
+
+  .form-description {
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    font-size: 0.95rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .form-errors {
+    padding: var(--spacing-sm);
+  }
+
+  .form-errors h4 {
+    font-size: 0.9rem;
+  }
+
+  .form-errors ul {
+    padding-left: var(--spacing-md);
+  }
+
+  .form-info {
+    padding: var(--spacing-sm);
+  }
+
+  .form-info h4 {
+    font-size: 1rem;
+  }
+
+  .form-info ol {
+    padding-left: var(--spacing-md);
+    font-size: 0.9rem;
   }
 }

@@ -1,13 +1,3 @@
-/**
- * Weather Application Type Definitions
- *
- * TypeScript types matching the Gemini-powered backend API contract.
- */
-
-// ============================================================================
-// Location Types (kept for frontend compatibility)
-// ============================================================================
-
 export interface Coordinates {
   lat: number;
   lon: number;
@@ -28,29 +18,17 @@ export interface PolygonLocation {
 
 export type Location = PointLocation | PolygonLocation;
 
-// ============================================================================
-// Date Query Types (kept for frontend compatibility)
-// ============================================================================
-
 export interface DateQuery {
-  month: number; // 1-12
-  day: number; // 1-31
-  year?: number; // Optional: 1980-2100, omit for historical likelihood
+  month: number;
+  day: number;
+  year?: number;
 }
-
-// ============================================================================
-// Weather Query Types (kept for frontend compatibility)
-// ============================================================================
 
 export interface WeatherQuery {
   location: Location;
   date: DateQuery;
   queryId?: string;
 }
-
-// ============================================================================
-// NEW: Gemini Backend Response Types
-// ============================================================================
 
 export interface RequestParameters {
   latitude: string;
@@ -135,23 +113,19 @@ export interface GeminiWeatherResponse {
   snow_graph_data: GraphData;
 }
 
-// ============================================================================
-// Weather Report Types (adapted for Gemini response)
-// ============================================================================
-
 export interface WeatherCondition {
   condition: string;
-  likelihood: number; // 0-100 percentage
+  likelihood: number;
   description: string;
-  threshold: number; // The threshold value
-  unit: string; // Unit of measurement
+  threshold: number;
+  unit: string;
   historicalRange: {
     min: number;
     max: number;
     median: number;
   };
-  percentile: number; // Percentile threshold (e.g., 90 for "Very Hot")
-  confidence: "low" | "medium" | "high"; // Data quality indicator
+  percentile: number;
+  confidence: "low" | "medium" | "high";
 }
 
 export interface WeatherReport {
@@ -167,19 +141,14 @@ export interface WeatherReport {
     summary: string;
   };
   metadata: {
-    generatedAt: string; // ISO timestamp
+    generatedAt: string;
     dataSource: string;
     dateRange: string;
     yearsAnalyzed: number;
     queryProcessingTimeMs: number;
   };
-  // NEW: Include Gemini response data
   geminiData?: GeminiWeatherResponse;
 }
-
-// ============================================================================
-// Historical Trend Types
-// ============================================================================
 
 export interface DataPoint {
   year: number;
@@ -208,8 +177,8 @@ export interface HistoricalTrend {
   variable: string;
   timeframe: string;
   dateRange: {
-    start: string; // YYYY-MM-DD
-    end: string; // YYYY-MM-DD
+    start: string;
+    end: string;
   };
   dataPoints: DataPoint[];
   regression: RegressionAnalysis;
@@ -224,10 +193,6 @@ export interface HistoricalTrend {
   };
 }
 
-// ============================================================================
-// API Error Types
-// ============================================================================
-
 export interface ApiError {
   error: string;
   message: string;
@@ -235,10 +200,6 @@ export interface ApiError {
   timestamp?: string;
   details?: Record<string, unknown>;
 }
-
-// ============================================================================
-// UI State Types
-// ============================================================================
 
 export type LoadingState = "idle" | "loading" | "success" | "error";
 

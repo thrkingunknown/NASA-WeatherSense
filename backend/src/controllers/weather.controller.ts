@@ -3,16 +3,10 @@ import { geminiService } from "../services/gemini.service";
 import { WeatherQuery } from "../types/weather.types";
 
 export class WeatherController {
-  /**
-   * Handle weather analysis requests
-   * GET /api/weather?latitude=X&longitude=Y&date=DD-MM-YYYY
-   */
   async getWeatherAnalysis(req: Request, res: Response): Promise<void> {
     try {
-      // Extract query parameters
       const { latitude, longitude, date } = req.query;
 
-      // Validate required parameters
       if (!latitude || !longitude || !date) {
         res.status(400).json({
           error: "Missing required parameters",
@@ -24,7 +18,6 @@ export class WeatherController {
         return;
       }
 
-      // Validate parameter types
       if (
         typeof latitude !== "string" ||
         typeof longitude !== "string" ||
@@ -37,7 +30,6 @@ export class WeatherController {
         return;
       }
 
-      // Validate date format (DD-MM-YYYY)
       const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
       if (!dateRegex.test(date)) {
         res.status(400).json({
@@ -48,7 +40,6 @@ export class WeatherController {
         return;
       }
 
-      // Validate latitude and longitude ranges
       const lat = parseFloat(latitude);
       const lon = parseFloat(longitude);
 
@@ -68,24 +59,20 @@ export class WeatherController {
         return;
       }
 
-      // Build query object
       const weatherQuery: WeatherQuery = {
         latitude,
         longitude,
         date,
       };
 
-      // Call Gemini service with timeout handling
       console.log("[Controller] Calling Gemini service...");
       const weatherData = await geminiService.getWeatherAnalysis(weatherQuery);
       console.log("[Controller] Gemini service completed successfully");
 
-      // Return successful response
       res.status(200).json(weatherData);
     } catch (error) {
       console.error("Error in weather controller:", error);
 
-      // Check if it's a timeout error
       if (error instanceof Error && error.message.includes("timeout")) {
         res.status(504).json({
           error: "Gateway Timeout",
@@ -104,9 +91,6 @@ export class WeatherController {
     }
   }
 
-  /**
-   * Health check endpoint
-   */
   async healthCheck(req: Request, res: Response): Promise<void> {
     res.status(200).json({
       status: "healthy",

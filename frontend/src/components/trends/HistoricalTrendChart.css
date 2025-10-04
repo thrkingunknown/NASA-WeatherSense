@@ -196,4 +196,86 @@
   .stat-label {
     font-size: 0.75rem;
   }
+
+  .historical-trend-chart {
+    padding: var(--spacing-lg);
+  }
+
+  .chart-title {
+    font-size: 1.25rem;
+  }
+
+  .chart-subtitle {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .historical-trend-chart {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-top: var(--spacing-lg);
+  }
+
+  .chart-header {
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .chart-title {
+    font-size: 1.1rem;
+  }
+
+  .chart-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .trend-indicator {
+    padding: var(--spacing-sm);
+    width: 100%;
+  }
+
+  .trend-icon {
+    font-size: 1.5rem;
+  }
+
+  .trend-direction {
+    font-size: 1rem;
+  }
+
+  .trend-magnitude {
+    font-size: 0.8rem;
+  }
+
+  .statistics-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+
+  .stat-card {
+    padding: var(--spacing-sm);
+  }
+
+  .stat-value {
+    font-size: 1rem;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+
+  .trend-interpretation {
+    padding: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  .trend-interpretation h4 {
+    font-size: 1rem;
+  }
+
+  .trend-interpretation p {
+    font-size: 0.9rem;
+  }
 }

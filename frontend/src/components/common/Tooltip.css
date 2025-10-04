@@ -87,16 +87,50 @@
   border-color: transparent var(--color-deep-blue) transparent transparent;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .tooltip-content {
     font-size: 0.8125rem;
     padding: 0.625rem 0.875rem;
     max-width: 200px !important;
   }
+
+  .tooltip-trigger {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
-/* Accessibility */
+@media (max-width: 480px) {
+  .tooltip-content {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    max-width: 180px !important;
+  }
+
+  .tooltip-arrow {
+    border-width: 5px;
+  }
+
+  .tooltip-content.top .tooltip-arrow {
+    bottom: -5px;
+    border-width: 5px 5px 0 5px;
+  }
+
+  .tooltip-content.bottom .tooltip-arrow {
+    top: -5px;
+    border-width: 0 5px 5px 5px;
+  }
+
+  .tooltip-content.left .tooltip-arrow {
+    right: -5px;
+    border-width: 5px 0 5px 5px;
+  }
+
+  .tooltip-content.right .tooltip-arrow {
+    left: -5px;
+    border-width: 5px 5px 5px 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tooltip-content {
     animation: none;

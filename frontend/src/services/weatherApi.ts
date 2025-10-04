@@ -1,10 +1,3 @@
-/**
- * Weather API Service
- *
- * Service layer for communicating with the Gemini-powered backend API.
- * Handles HTTP requests, error handling, and data transformation.
- */
-
 import axios, { AxiosError } from "axios";
 import type {
   WeatherQuery,
@@ -17,20 +10,17 @@ import type {
   GraphData,
 } from "../types/weather";
 
-// Get API base URL from environment variable or default to localhost
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
 
-// Create axios instance with default config
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 75000, // 75 seconds (backend has 90s timeout)
+  timeout: 75000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add request interceptor for logging
 apiClient.interceptors.request.use(
   (config) => {
     console.log(
@@ -44,7 +34,6 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Add response interceptor for logging
 apiClient.interceptors.response.use(
   (response) => {
     console.log(`[API] Success: ${response.config.url}`, response.status);
@@ -56,19 +45,14 @@ apiClient.interceptors.response.use(
   }
 );
 
-/**
- * Transform axios error to ApiError format
- */
 function transformError(error: unknown): ApiError {
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiError>;
 
-    // Check if we have error response from server
     if (axiosError.response?.data) {
       return axiosError.response.data;
     }
 
-    // Network or timeout error
     if (axiosError.code === "ECONNABORTED") {
       return {
         error: "Request Timeout",
@@ -87,7 +71,6 @@ function transformError(error: unknown): ApiError {
       };
     }
 
-    // Generic axios error
     return {
       error: "Request Failed",
       message: axiosError.message || "An unexpected error occurred",
@@ -95,7 +78,6 @@ function transformError(error: unknown): ApiError {
     };
   }
 
-  // Non-axios error
   return {
     error: "Unknown Error",
     message:
@@ -104,31 +86,20 @@ function transformError(error: unknown): ApiError {
   };
 }
 
-/**
- * Fetch weather likelihood report for a specific location and date
- * Now powered by Gemini AI
- *
- * @param query - Weather query with location and date
- * @returns Promise<WeatherReport>
- * @throws ApiError
- */
 export async function fetchWeatherReport(
   query: WeatherQuery
 ): Promise<WeatherReport> {
   try {
-    // Extract coordinates from location
     const coords =
       query.location.type === "point"
         ? query.location.coordinates
-        : query.location.coordinates[0]; // Use first point for polygon
+        : query.location.coordinates[0];
 
-    // Format date as DD-MM-YYYY for the new backend
     const day = String(query.date.day).padStart(2, "0");
     const month = String(query.date.month).padStart(2, "0");
     const year = query.date.year || new Date().getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
 
-    // Call the new Gemini backend API
     const response = await apiClient.get<GeminiWeatherResponse>(
       "/api/weather",
       {
@@ -142,7 +113,6 @@ export async function fetchWeatherReport(
 
     const geminiData = response.data;
 
-    // Transform Gemini response to WeatherReport format for frontend compatibility
     const weatherReport: WeatherReport = {
       reportId: `gemini-${Date.now()}`,
       query: {
@@ -173,9 +143,6 @@ export async function fetchWeatherReport(
   }
 }
 
-/**
- * Transform Gemini weather conditions to frontend WeatherCondition format
- */
 function transformGeminiToConditions(
   geminiData: GeminiWeatherResponse
 ): WeatherCondition[] {
@@ -183,7 +150,6 @@ function transformGeminiToConditions(
   const { general_conditions, specific_variables } =
     geminiData.weather_conditions;
 
-  // Temperature condition
   if (
     general_conditions.is_very_hot_percentage > 0 ||
     general_conditions.is_very_cold_percentage > 0
@@ -233,7 +199,6 @@ function transformGeminiToConditions(
     });
   }
 
-  // Wind condition
   if (general_conditions.is_very_windy_percentage > 0) {
     conditions.push({
       condition: "Very Windy",
@@ -251,7 +216,6 @@ function transformGeminiToConditions(
     });
   }
 
-  // Add humidity as a condition if significant
   if (specific_variables.humidity_percent > 70) {
     conditions.push({
       condition: "High Humidity",
@@ -272,25 +236,17 @@ function transformGeminiToConditions(
   return conditions;
 }
 
-/**
- * Calculate risk level based on comfortability score
- */
 function calculateRiskLevel(score: number): "low" | "medium" | "high" {
   if (score >= 70) return "low";
   if (score >= 40) return "medium";
   return "high";
 }
 
-/**
- * Create historical trend from graph data already in the response
- * Avoids making additional API calls to Gemini
- */
 export function createHistoricalTrendFromData(
   geminiData: GeminiWeatherResponse,
   variable: "temperature" | "rainfall" | "snowfall",
   location: Coordinates
 ): HistoricalTrend {
-  // Select the appropriate graph data based on variable
   let graphData: GraphData;
   let unit: string;
   let variableName: string;
@@ -309,17 +265,13 @@ export function createHistoricalTrendFromData(
     variableName = "Snowfall";
   }
 
-  // Transform quarterly data to data points
   const dataPoints = transformQuarterlyToDataPoints(graphData, unit);
 
-  // Calculate statistics
   const values = dataPoints.map((dp) => dp.value);
   const statistics = calculateStatistics(values);
 
-  // Calculate regression
   const regression = calculateRegression(dataPoints);
 
-  // Determine trend
   const trendDirection =
     regression.slope > 0.1
       ? "increasing"
@@ -360,18 +312,6 @@ export function createHistoricalTrendFromData(
   };
 }
 
-/**
- * Fetch historical weather trend data
- * Now uses Gemini-generated historical data
- *
- * @param location - Coordinates for the location
- * @param variable - Weather variable (temperature, rainfall, snowfall)
- * @param _timeframe - Time period (always uses 5 years from Gemini)
- * @param _startDate - Optional start date (not used with Gemini)
- * @param _endDate - Optional end date (not used with Gemini)
- * @returns Promise<HistoricalTrend>
- * @throws ApiError
- */
 export async function fetchHistoricalTrend(
   location: Coordinates,
   variable: string,
@@ -380,7 +320,6 @@ export async function fetchHistoricalTrend(
   _endDate?: string
 ): Promise<HistoricalTrend> {
   try {
-    // First get the Gemini weather data
     const formattedDate = new Date()
       .toLocaleDateString("en-GB")
       .replace(/\//g, "-");
@@ -469,9 +408,6 @@ export async function fetchHistoricalTrend(
   }
 }
 
-/**
- * Transform quarterly graph data to individual data points
- */
 function transformQuarterlyToDataPoints(
   graphData: {
     year_minus_5: number[];
@@ -505,22 +441,15 @@ function transformQuarterlyToDataPoints(
   ];
 
   years.forEach(({ data, year }) => {
-    // Q1 (Jan-Mar) - month 2, day 15
     dataPoints.push({ year, month: 2, day: 15, value: data[0], unit });
-    // Q2 (Apr-Jun) - month 5, day 15
     dataPoints.push({ year, month: 5, day: 15, value: data[1], unit });
-    // Q3 (Jul-Sep) - month 8, day 15
     dataPoints.push({ year, month: 8, day: 15, value: data[2], unit });
-    // Q4 (Oct-Dec) - month 11, day 15
     dataPoints.push({ year, month: 11, day: 15, value: data[3], unit });
   });
 
   return dataPoints;
 }
 
-/**
- * Calculate statistics from values
- */
 function calculateStatistics(values: number[]): {
   mean: number;
   median: number;
@@ -541,9 +470,6 @@ function calculateStatistics(values: number[]): {
   return { mean, median, stdDev, percentile10, percentile90 };
 }
 
-/**
- * Calculate linear regression
- */
 function calculateRegression(
   dataPoints: Array<{ year: number; month: number; value: number }>
 ): {
@@ -569,7 +495,6 @@ function calculateRegression(
   const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
   const intercept = (sumY - slope * sumX) / n;
 
-  // Calculate R-squared
   const yMean = sumY / n;
   let ssTotal = 0,
     ssResidual = 0;
@@ -583,11 +508,6 @@ function calculateRegression(
   return { slope, intercept, rSquared };
 }
 
-/**
- * Check if the API is available
- *
- * @returns Promise<boolean>
- */
 export async function checkApiHealth(): Promise<boolean> {
   try {
     const response = await apiClient.get("/api/health", { timeout: 5000 });

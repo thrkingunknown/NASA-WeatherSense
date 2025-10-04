@@ -257,6 +257,7 @@
 @media (max-width: 768px) {
   .weather-condition-card {
     min-height: 280px;
+    padding: var(--spacing-md);
   }
 
   .likelihood-value {
@@ -269,5 +270,43 @@
 
   .condition-name {
     font-size: 1.1rem;
+  }
+
+  .card-header {
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-condition-card {
+    min-height: 240px;
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+  }
+
+  .card-header {
+    gap: var(--spacing-xs);
+  }
+
+  .condition-icon {
+    font-size: 1.75rem;
+  }
+
+  .condition-name {
+    font-size: 1rem;
+  }
+
+  .likelihood-value {
+    font-size: 2.5rem;
+  }
+
+  .likelihood-label {
+    font-size: 0.9rem;
+  }
+
+  .likelihood-bar {
+    height: 10px;
+    margin: var(--spacing-md) 0;
   }
 }

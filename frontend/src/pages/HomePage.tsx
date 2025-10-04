@@ -1,10 +1,3 @@
-/**
- * Home Page Component
- *
- * Main page for the weather likelihood application.
- * Orchestrates the query form, results display, and historical trend analysis.
- */
-
 import { useState } from "react";
 import "./HomePage.css";
 import { WeatherQueryForm } from "../components/weather/WeatherQueryForm";
@@ -47,33 +40,26 @@ export function HomePage() {
     setTemperatureTrend(null);
     setRainfallTrend(null);
     setSnowfallTrend(null);
-    setLastQuery(query); // Save query for retry
+    setLastQuery(query);
 
-    // Create abort controller for cleanup
     let isMounted = true;
 
     try {
-      // Fetch weather report (includes ALL data including graphs)
       console.log("[HomePage] Fetching weather report...");
       const report = await fetchWeatherReport(query);
 
-      // Only update state if component is still mounted
       if (!isMounted) return;
 
       setWeatherReport(report);
 
-      // Set loading to success immediately after getting the report
-      // This shows the UI right away instead of waiting for graph processing
       setLoadingState("success");
 
-      // Extract historical trends from the data we already have
-      // No additional API calls needed!
       console.log("[HomePage] Extracting historical trends from response...");
       if (report.geminiData) {
         const location =
           report.query.location.type === "point"
             ? report.query.location.coordinates
-            : report.query.location.coordinates[0]; // Use first coord for polygon
+            : report.query.location.coordinates[0];
 
         const tempTrend = createHistoricalTrendFromData(
           report.geminiData,
@@ -102,14 +88,12 @@ export function HomePage() {
 
       console.log("[HomePage] All data loaded successfully!");
     } catch (err) {
-      // Only update state if component is still mounted
       if (!isMounted) return;
 
       setError(err as ApiError);
       setLoadingState("error");
     }
 
-    // Cleanup function
     return () => {
       isMounted = false;
     };
@@ -131,7 +115,6 @@ export function HomePage() {
       </header>
 
       <main className="page-content">
-        {/* Weather Query Form */}
         {loadingState !== "success" && (
           <WeatherQueryForm
             onSubmit={handleQuerySubmit}
@@ -139,7 +122,6 @@ export function HomePage() {
           />
         )}
 
-        {/* Loading state */}
         {loadingState === "loading" && (
           <LoadingSpinner
             message="Analyzing weather data (this may take up to 60 seconds)..."
@@ -147,7 +129,6 @@ export function HomePage() {
           />
         )}
 
-        {/* Error state */}
         {loadingState === "error" && error && (
           <ErrorMessage
             error={error}
@@ -159,7 +140,6 @@ export function HomePage() {
           />
         )}
 
-        {/* Success state */}
         {loadingState === "success" && weatherReport && (
           <div className="results-section">
             <div className="results-header">
@@ -179,10 +159,8 @@ export function HomePage() {
               </button>
             </div>
 
-            {/* Enhanced Weather Report Display */}
             <WeatherReportDisplay report={weatherReport} />
 
-            {/* Historical Trend Charts */}
             <div className="trends-section">
               <h2 className="trends-title">📊 Historical Trends (5 Years)</h2>
 

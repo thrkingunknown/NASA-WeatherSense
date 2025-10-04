@@ -208,5 +208,89 @@
   margin-bottom: 0;
 }
 
+@media (max-width: 768px) {
+  .page-header {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+  }
+
+  .tagline {
+    font-size: 1rem;
+  }
+
+  .page-content {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .results-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-new-query {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .trends-title {
+    font-size: 1.5rem;
+  }
+
+  .trends-section {
+    margin-top: var(--spacing-lg);
+  }
+
+  .trend-chart-wrapper {
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+    letter-spacing: -0.25px;
+  }
+
+  .tagline {
+    font-size: 0.9rem;
+  }
+
+  .page-content {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .query-section {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .results-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .btn-new-query {
+    font-size: 0.9rem;
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .trends-title {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .page-header::before,
+  .page-header::after {
+    display: none;
+  }
+}
+
 /* Weather report now uses WeatherReportDisplay component */
 /* Historical trend now uses HistoricalTrendChart component */

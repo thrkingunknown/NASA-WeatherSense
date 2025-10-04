@@ -1,9 +1,3 @@
-/**
- * Weather Condition Card Component
- *
- * Enhanced display for individual weather condition with visual indicators.
- */
-
 import type { WeatherCondition } from "../../types/weather";
 import "./WeatherConditionCard.css";
 
@@ -11,7 +5,6 @@ interface WeatherConditionCardProps {
   condition: WeatherCondition;
 }
 
-// Map condition names to emoji icons
 const conditionIcons: Record<string, string> = {
   "Very Hot": "🔥",
   "Very Cold": "❄️",
@@ -20,7 +13,6 @@ const conditionIcons: Record<string, string> = {
   "Very Uncomfortable": "😰",
 };
 
-// Map condition names to color themes
 const conditionColors: Record<string, string> = {
   "Very Hot": "hot",
   "Very Cold": "cold",
@@ -34,7 +26,6 @@ export function WeatherConditionCard({ condition }: WeatherConditionCardProps) {
   const colorTheme = conditionColors[condition.condition] || "default";
   const likelihood = condition.likelihood;
 
-  // Determine risk level based on likelihood
   const getRiskLevel = (likelihood: number): string => {
     if (likelihood >= 75) return "Very High";
     if (likelihood >= 50) return "High";
@@ -47,19 +38,16 @@ export function WeatherConditionCard({ condition }: WeatherConditionCardProps) {
 
   return (
     <div className={`weather-condition-card theme-${colorTheme}`}>
-      {/* Header */}
       <div className="card-header">
         <span className="condition-icon">{icon}</span>
         <h3 className="condition-name">{condition.condition}</h3>
       </div>
 
-      {/* Likelihood Display */}
       <div className="likelihood-display">
         <div className="likelihood-value">{likelihood}%</div>
         <div className="likelihood-label">Likelihood</div>
       </div>
 
-      {/* Progress Bar */}
       <div className="likelihood-bar">
         <div
           className="likelihood-bar-fill"
@@ -67,7 +55,6 @@ export function WeatherConditionCard({ condition }: WeatherConditionCardProps) {
         />
       </div>
 
-      {/* Risk Level Badge */}
       <div
         className={`risk-badge risk-${riskLevel
           .toLowerCase()
@@ -76,10 +63,8 @@ export function WeatherConditionCard({ condition }: WeatherConditionCardProps) {
         {riskLevel} Risk
       </div>
 
-      {/* Description */}
       <p className="condition-description">{condition.description}</p>
 
-      {/* Threshold Info */}
       <div className="threshold-info">
         <span className="threshold-label">Threshold:</span>
         <span className="threshold-value">
@@ -87,7 +72,6 @@ export function WeatherConditionCard({ condition }: WeatherConditionCardProps) {
         </span>
       </div>
 
-      {/* Historical Range */}
       {condition.historicalRange && (
         <div className="historical-range">
           <div className="range-label">Historical Range:</div>

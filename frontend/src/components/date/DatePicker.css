@@ -76,3 +76,24 @@
     width: 100%;
   }
 }
+
+@media (max-width: 480px) {
+  .date-picker-label {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .field-group label {
+    font-size: 0.85rem;
+  }
+
+  .date-select {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.95rem;
+  }
+
+  .date-picker-info {
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}

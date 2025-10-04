@@ -11,7 +11,6 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || "development",
 };
 
-// Validate required environment variables
 if (!config.geminiApiKey) {
   console.error("ERROR: GEMINI_API_KEY is not set in environment variables");
   console.error("Please create a .env file based on .env.example");

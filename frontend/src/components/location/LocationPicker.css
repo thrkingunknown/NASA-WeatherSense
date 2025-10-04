@@ -139,4 +139,54 @@
   .map-container {
     height: 300px;
   }
+
+  .location-picker-label {
+    font-size: 1rem;
+  }
+
+  .location-info {
+    padding: var(--spacing-sm);
+  }
+
+  .location-name {
+    font-size: 0.95rem;
+  }
+
+  .coordinates {
+    font-size: 0.85rem;
+  }
+
+  .btn-secondary {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-container {
+    height: 250px;
+    border-radius: var(--radius-sm);
+  }
+
+  .location-picker {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .location-picker-label {
+    font-size: 0.95rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .location-tip {
+    font-size: 0.85rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .polygon-notice {
+    padding: var(--spacing-sm);
+  }
+
+  .polygon-notice p {
+    font-size: 0.85rem;
+  }
 }

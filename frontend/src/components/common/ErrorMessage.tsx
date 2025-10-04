@@ -1,10 +1,3 @@
-/**
- * Error Message Component
- *
- * Enhanced error display with icons, styling, and helpful suggestions.
- * Shows error details and provides recovery actions.
- */
-
 import type { ApiError } from "../../types/weather";
 import "./ErrorMessage.css";
 
@@ -15,25 +8,23 @@ interface ErrorMessageProps {
 }
 
 export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
-  // Get error icon based on error type
   const getErrorIcon = (): string => {
     const errorString = typeof error.error === "string" ? error.error : "";
     if (error.statusCode === 0 || errorString.includes("Network")) {
-      return "🌐"; // Network error
+      return "🌐";
     }
     if (error.statusCode === 400 || error.statusCode === 422) {
-      return "⚠️"; // Validation error
+      return "⚠️";
     }
     if (error.statusCode === 404) {
-      return "🔍"; // Not found
+      return "🔍";
     }
     if (error.statusCode === 503 || error.statusCode === 504) {
-      return "⏱️"; // Timeout/unavailable
+      return "⏱️";
     }
-    return "❌"; // Generic error
+    return "❌";
   };
 
-  // Get helpful suggestion based on error type
   const getSuggestion = (): string => {
     const errorString = typeof error.error === "string" ? error.error : "";
     if (error.statusCode === 0 || errorString.includes("Network")) {
@@ -57,28 +48,23 @@ export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
   return (
     <div className="error-message" role="alert" aria-live="assertive">
       <div className="error-content">
-        {/* Error Icon */}
         <div className="error-icon">{getErrorIcon()}</div>
 
-        {/* Error Details */}
         <div className="error-details">
           <h3 className="error-title">
             {typeof error.error === "string" ? error.error : "Error"}
           </h3>
           <p className="error-description">{error.message}</p>
 
-          {/* Status Code Badge */}
           {error.statusCode && error.statusCode > 0 && (
             <span className="status-badge">Status: {error.statusCode}</span>
           )}
 
-          {/* Suggestion */}
           <div className="error-suggestion">
             <span className="suggestion-icon">💡</span>
             <p className="suggestion-text">{getSuggestion()}</p>
           </div>
 
-          {/* Additional Details */}
           {error.details && Object.keys(error.details).length > 0 && (
             <details className="error-details-toggle">
               <summary>Technical Details</summary>
@@ -90,7 +76,6 @@ export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
         </div>
       </div>
 
-      {/* Action Buttons */}
       <div className="error-actions">
         {onRetry && (
           <button

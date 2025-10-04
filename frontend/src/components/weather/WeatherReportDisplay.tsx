@@ -1,9 +1,3 @@
-/**
- * Weather Report Display Component
- *
- * Enhanced display for complete weather report with condition cards.
- */
-
 import { WeatherConditionCard } from "./WeatherConditionCard";
 import type { WeatherReport } from "../../types/weather";
 import "./WeatherReportDisplay.css";
@@ -12,7 +6,6 @@ interface WeatherReportDisplayProps {
   report: WeatherReport;
 }
 
-// Helper functions for Air Quality Index
 const getAQIColor = (aqi: number): string => {
   if (aqi <= 50) return "#00e400"; // Good
   if (aqi <= 100) return "#ffff00"; // Moderate
@@ -69,9 +62,33 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
     return `${month} ${day}${year}`;
   };
 
-  // Calculate overall risk score from Gemini comfortability score
-  // Gemini score: 0 (Extremely Uncomfortable) to 100 (Extremely Comfortable)
-  // We invert it: High comfort = Low risk
+  const handleExportJSON = () => {
+    const { metadata, reportId, ...reportData } = report;
+
+    const jsonString = JSON.stringify(reportData, null, 2);
+
+    const blob = new Blob([jsonString], { type: "application/json" });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    const locationName =
+      report.query.location.name?.replace(/\s+/g, "_") || "location";
+    const dateStr = `${report.query.date.year || "historical"}-${String(
+      report.query.date.month
+    ).padStart(2, "0")}-${String(report.query.date.day).padStart(2, "0")}`;
+    const filename = `weather_report_${locationName}_${dateStr}.json`;
+
+    link.href = url;
+    link.download = filename;
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   const comfortabilityScore =
     report.geminiData?.overall_comfortability_score?.score ?? 50;
   const comfortabilitySummary =
@@ -86,7 +103,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
 
   return (
     <div className="weather-report-display">
-      {/* Report Summary */}
       <div className="report-summary">
         <div className="summary-header">
           <div className="location-info">
@@ -112,10 +128,27 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
               <div className="comfort-label">Comfort Score</div>
               <div className="comfort-summary">{comfortabilitySummary}</div>
             </div>
+
+            <button
+              className="export-json-btn"
+              onClick={handleExportJSON}
+              title="Download weather report as JSON"
+            >
+              <span className="export-icon">📥</span>
+              <span className="export-text">Export JSON</span>
+            </button>
           </div>
         </div>
 
-        <div className="summary-details" style={{ justifyContent: "center", alignItems: "center", alignSelf: "center", alignContent: "center" }}>
+        <div
+          className="summary-details"
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            alignSelf: "center",
+            alignContent: "center",
+          }}
+        >
           <div className="detail-item">
             <span className="detail-icon">📅</span>
             <div className="detail-content">
@@ -128,7 +161,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
         </div>
       </div>
 
-      {/* Condition Cards */}
       <div className="conditions-section">
         <h3 className="section-title">Weather Condition Likelihood</h3>
         <p className="section-description">
@@ -143,12 +175,10 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
         </div>
       </div>
 
-      {/* AI Activities & Recommendations */}
       {report.geminiData?.activities && (
         <div className="activities-section">
           <h3 className="section-title">🎯 AI Recommendations</h3>
 
-          {/* Suggestions */}
           {report.geminiData.activities.suggestions &&
             report.geminiData.activities.suggestions.length > 0 && (
               <div className="activity-group suggestions-group">
@@ -168,7 +198,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
               </div>
             )}
 
-          {/* Warnings */}
           {report.geminiData.activities.warnings &&
             report.geminiData.activities.warnings.length > 0 && (
               <div className="activity-group warnings-group">
@@ -186,7 +215,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
               </div>
             )}
 
-          {/* Reminders */}
           {report.geminiData.activities.reminders &&
             report.geminiData.activities.reminders.length > 0 && (
               <div className="activity-group reminders-group">
@@ -208,7 +236,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
         </div>
       )}
 
-      {/* Air Quality Section */}
       {report.geminiData?.weather_conditions?.specific_variables
         ?.air_quality_index != null && (
         <div className="air-quality-section">
@@ -306,7 +333,6 @@ export function WeatherReportDisplay({ report }: WeatherReportDisplayProps) {
         </div>
       )}
 
-      {/* Info Note */}
       <div className="report-note">
         <h4>📌 Understanding the Results</h4>
         <ul>

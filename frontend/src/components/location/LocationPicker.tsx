@@ -1,24 +1,9 @@
-/**
- * Location Picker Component
- *
- * Component for selecting a location using Mapbox.
- * Supports both point and polygon selection.
- *
- * Note: Mapbox GL JS v2.x adds non-passive event listeners for touch events,
- * which triggers Chrome performance warnings. This is a known issue with the
- * Mapbox library (https://github.com/mapbox/mapbox-gl-js/issues/10173).
- * The warnings are cosmetic and don't impact actual performance. The CSS
- * touch-action property and GPU acceleration are configured to optimize
- * touch responsiveness.
- */
-
 import { useEffect, useRef, useCallback } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import type { Location, Coordinates } from "../../types/weather";
 import "./LocationPicker.css";
 
-// Set Mapbox access token from environment
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_API_KEY || "";
 
 interface LocationPickerProps {
@@ -35,23 +20,20 @@ export function LocationPicker({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const marker = useRef<mapboxgl.Marker | null>(null);
-  const isMountedRef = useRef<boolean>(true); // Track mount status across renders
-  const geocodeTimeoutRef = useRef<number | null>(null); // Debounce timer
-  const locationType = value.type; // For future polygon support
+  const isMountedRef = useRef<boolean>(true);
+  const geocodeTimeoutRef = useRef<number | null>(null);
+  const locationType = value.type;
 
-  // Set mounted status on mount and cleanup
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      // Clear any pending geocode requests
       if (geocodeTimeoutRef.current) {
         clearTimeout(geocodeTimeoutRef.current);
       }
     };
   }, []);
 
-  // Memoize updateLocation to prevent unnecessary re-renders
   const updateLocation = useCallback(
     (location: Location) => {
       onChange(location);
@@ -59,15 +41,12 @@ export function LocationPicker({
     [onChange]
   );
 
-  // Memoize reverseGeocode to prevent recreation on every render
   const reverseGeocode = useCallback(
     async (coords: Coordinates) => {
-      // Clear any pending geocode requests to debounce
       if (geocodeTimeoutRef.current) {
         clearTimeout(geocodeTimeoutRef.current);
       }
 
-      // Debounce geocoding requests by 500ms
       geocodeTimeoutRef.current = window.setTimeout(async () => {
         try {
           const response = await fetch(
@@ -75,7 +54,6 @@ export function LocationPicker({
           );
           const data = await response.json();
 
-          // Only update state if component is still mounted
           if (!isMountedRef.current) return;
 
           if (data.features && data.features[0]) {
@@ -87,7 +65,6 @@ export function LocationPicker({
             });
           }
         } catch (error) {
-          // Only log error if component is still mounted
           if (isMountedRef.current) {
             console.error("Geocoding error:", error);
           }
@@ -97,7 +74,6 @@ export function LocationPicker({
     [updateLocation]
   );
 
-  // Initialize map
   useEffect(() => {
     if (!mapContainer.current || map.current) return;
 
@@ -118,17 +94,15 @@ export function LocationPicker({
       doubleClickZoom: true,
     });
 
-    // Add navigation controls with optimized options
     map.current.addControl(
       new mapboxgl.NavigationControl({
         showCompass: true,
         showZoom: true,
-        visualizePitch: false, // Reduce complexity
+        visualizePitch: false,
       }),
       "top-right"
     );
 
-    // Add marker for point location
     if (value.type === "point") {
       marker.current = new mapboxgl.Marker({ draggable: true })
         .setLngLat([value.coordinates.lon, value.coordinates.lat])
@@ -139,17 +113,14 @@ export function LocationPicker({
         const lngLat = marker.current.getLngLat();
         const coords = { lat: lngLat.lat, lon: lngLat.lng };
 
-        // Reverse geocode to get the new location name
         reverseGeocode(coords);
       });
     }
 
-    // Click to set location
     map.current.on("click", (e) => {
       if (locationType === "point") {
         const coords = { lat: e.lngLat.lat, lon: e.lngLat.lng };
 
-        // Update or create marker
         if (marker.current) {
           marker.current.setLngLat([coords.lon, coords.lat]);
         } else if (map.current) {
@@ -162,18 +133,16 @@ export function LocationPicker({
             const lngLat = marker.current.getLngLat();
             const coords = { lat: lngLat.lat, lon: lngLat.lng };
 
-            // Reverse geocode to get the new location name
             reverseGeocode(coords);
           });
         }
 
-        // Reverse geocode to get location name
         reverseGeocode(coords);
       }
     });
 
     return () => {
-      isMountedRef.current = false; // Mark as unmounted
+      isMountedRef.current = false;
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -183,7 +152,26 @@ export function LocationPicker({
         marker.current = null;
       }
     };
-  }, [reverseGeocode, updateLocation, locationType, value]); // Add dependencies
+  }, []);
+
+  useEffect(() => {
+    if (!map.current || !marker.current || value.type !== "point") return;
+
+    const currentLngLat = marker.current.getLngLat();
+    const valueLon = value.coordinates.lon;
+    const valueLat = value.coordinates.lat;
+
+    if (
+      Math.abs(currentLngLat.lng - valueLon) > 0.00001 ||
+      Math.abs(currentLngLat.lat - valueLat) > 0.00001
+    ) {
+      marker.current.setLngLat([valueLon, valueLat]);
+      map.current.flyTo({
+        center: [valueLon, valueLat],
+        zoom: map.current.getZoom(),
+      });
+    }
+  }, [value]);
 
   const handleManualCoordinates = () => {
     const lat = prompt("Enter latitude (-90 to 90):");
@@ -222,12 +210,10 @@ export function LocationPicker({
             const lngLat = marker.current.getLngLat();
             const coords = { lat: lngLat.lat, lon: lngLat.lng };
 
-            // Reverse geocode to get the new location name
             reverseGeocode(coords);
           });
         }
 
-        // Reverse geocode to get location name
         reverseGeocode(coords);
       } else {
         alert(
@@ -271,7 +257,6 @@ export function LocationPicker({
         </div>
       </div>
 
-      {/* Note: Polygon support can be added in future */}
       {locationType === "polygon" && (
         <div className="polygon-notice">
           <p>

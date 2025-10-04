@@ -1,9 +1,3 @@
-/**
- * Historical Trend Chart Component
- *
- * Visualizes historical weather data with regression line using Recharts.
- */
-
 import {
   LineChart,
   Line,
@@ -22,7 +16,6 @@ interface HistoricalTrendChartProps {
   trend: HistoricalTrend;
 }
 
-// Format variable names for display
 const variableNames: Record<string, string> = {
   T2M: "Temperature",
   PRECTOT: "Precipitation",
@@ -32,7 +25,6 @@ const variableNames: Record<string, string> = {
   WIND_SPEED: "Wind Speed",
 };
 
-// Get unit display
 const getUnitDisplay = (variable: string): string => {
   if (variable === "T2M") return "°C";
   if (variable === "PRECTOT") return "mm";
@@ -42,7 +34,6 @@ const getUnitDisplay = (variable: string): string => {
 };
 
 export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
-  // Transform data for Recharts
   const chartData = trend.dataPoints.map((point) => ({
     date: `${point.year}-${String(point.month).padStart(2, "0")}-${String(
       point.day
@@ -54,7 +45,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
   const variableName = variableNames[trend.variable] || trend.variable;
   const unit = getUnitDisplay(trend.variable);
 
-  // Trend direction indicator
   const getTrendIcon = () => {
     if (trend.trendDirection === "increasing") return "📈";
     if (trend.trendDirection === "decreasing") return "📉";
@@ -69,7 +59,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
 
   return (
     <div className="historical-trend-chart">
-      {/* Chart Header */}
       <div className="chart-header">
         <div className="chart-title-section">
           <h3 className="chart-title">{variableName} Historical Trend</h3>
@@ -94,7 +83,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
         </div>
       </div>
 
-      {/* Chart */}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
           data={chartData}
@@ -118,7 +106,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
           />
           <Legend wrapperStyle={{ paddingTop: "20px" }} iconType="line" />
 
-          {/* Mean reference line */}
           <ReferenceLine
             y={trend.statistics.mean}
             stroke="#999"
@@ -132,7 +119,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
             }}
           />
 
-          {/* Actual data line */}
           <Line
             type="monotone"
             dataKey="value"
@@ -145,7 +131,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
         </LineChart>
       </ResponsiveContainer>
 
-      {/* Statistics Summary */}
       <div className="statistics-summary">
         <div className="stat-card">
           <div className="stat-label">
@@ -218,7 +203,6 @@ export function HistoricalTrendChart({ trend }: HistoricalTrendChartProps) {
         </div>
       </div>
 
-      {/* Interpretation */}
       <div className="trend-interpretation">
         <h4>Analysis</h4>
         <p>{trend.interpretation}</p>

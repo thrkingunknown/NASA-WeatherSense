@@ -1,9 +1,3 @@
-/**
- * Date Picker Component
- *
- * Component for selecting month, day, and optionally year for weather queries.
- */
-
 import { useState, useEffect, useMemo } from "react";
 import type { DateQuery } from "../../types/weather";
 import "./DatePicker.css";
@@ -15,7 +9,6 @@ interface DatePickerProps {
   label?: string;
 }
 
-// Memoize static arrays outside component
 const MONTHS = [
   { value: 1, label: "January" },
   { value: 2, label: "February" },
@@ -44,7 +37,6 @@ export function DatePicker({
   const [year, setYear] = useState(value.year || "");
   const [useHistorical, setUseHistorical] = useState(!value.year);
 
-  // Update parent when values change - REMOVED onChange from dependencies to prevent infinite loop
   useEffect(() => {
     onChange({
       month,
@@ -53,7 +45,6 @@ export function DatePicker({
     });
   }, [month, day, year, useHistorical]);
 
-  // Get days in selected month
   const getDaysInMonth = (m: number, y?: number) => {
     const currentYear = y || new Date().getFullYear();
     return new Date(currentYear, m, 0).getDate();
@@ -61,14 +52,12 @@ export function DatePicker({
 
   const daysInMonth = getDaysInMonth(month, year ? Number(year) : undefined);
 
-  // Adjust day if it exceeds days in selected month
   useEffect(() => {
     if (day > daysInMonth) {
       setDay(daysInMonth);
     }
   }, [daysInMonth, day]);
 
-  // Memoize days array to avoid recreation on every render
   const days = useMemo(
     () => Array.from({ length: daysInMonth }, (_, i) => i + 1),
     [daysInMonth]
@@ -76,7 +65,6 @@ export function DatePicker({
 
   const currentYear = new Date().getFullYear();
 
-  // Memoize recent years to avoid filtering on every render
   const recentYears = useMemo(
     () =>
       YEARS.filter(
@@ -90,7 +78,6 @@ export function DatePicker({
       <label className="date-picker-label">{label}</label>
 
       <div className="date-picker-fields">
-        {/* Month Select */}
         <div className="field-group">
           <label htmlFor="month-select">Month</label>
           <select
@@ -107,7 +94,6 @@ export function DatePicker({
           </select>
         </div>
 
-        {/* Day Select */}
         <div className="field-group">
           <label htmlFor="day-select">Day</label>
           <select
@@ -124,7 +110,6 @@ export function DatePicker({
           </select>
         </div>
 
-        {/* Year Select (optional) */}
         {includeYear && (
           <div className="field-group">
             <label htmlFor="year-select">Year</label>
@@ -143,7 +128,6 @@ export function DatePicker({
               }}
               className="date-select"
             >
-              <option value="historical">Historical (All Years)</option>
               <optgroup label="Recent Years">
                 {recentYears.map((y) => (
                   <option key={y} value={y}>
@@ -163,7 +147,6 @@ export function DatePicker({
         )}
       </div>
 
-      {/* Info message */}
       {useHistorical && (
         <p className="date-picker-info">
           Historical mode: Analyze likelihood across all available years

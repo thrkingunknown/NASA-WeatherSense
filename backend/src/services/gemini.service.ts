@@ -2,14 +2,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { config } from "../config/config";
 import { WeatherQuery, WeatherResponse } from "../types/weather.types";
 
-// Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
 export class GeminiService {
   private model;
 
   constructor() {
-    // Using gemini-1.5-pro model for better JSON responses
     this.model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
       generationConfig: {
@@ -22,9 +20,6 @@ export class GeminiService {
     });
   }
 
-  /**
-   * Generate weather analysis using Gemini API
-   */
   async getWeatherAnalysis(query: WeatherQuery): Promise<WeatherResponse> {
     try {
       console.log(
@@ -33,7 +28,6 @@ export class GeminiService {
 
       const prompt = this.buildPrompt(query);
 
-      // Add timeout wrapper (60 seconds max)
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
           () => reject(new Error("Gemini API timeout after 60 seconds")),
@@ -49,10 +43,8 @@ export class GeminiService {
 
       console.log("[Gemini] Successfully received response");
 
-      // Parse the JSON response
       const parsedResponse = JSON.parse(text);
 
-      // Validate response has required fields
       if (
         !parsedResponse.overall_comfortability_score ||
         !parsedResponse.activities
@@ -73,18 +65,8 @@ export class GeminiService {
     }
   }
 
-  /**
-   * Build the prompt for Gemini API
-   *
-   * ⚠️ CUSTOMIZE THIS PROMPT BELOW ⚠️
-   * Modify the instructions to change how Gemini generates weather analysis
-   */
   private buildPrompt(query: WeatherQuery): string {
     const { latitude, longitude, date } = query;
-
-    // ════════════════════════════════════════════════════════════════
-    // 📝 CUSTOM INSTRUCTION SECTION - MODIFY THIS PROMPT AS NEEDED
-    // ════════════════════════════════════════════════════════════════
 
     const customInstructions = `
 AI Agent System Instructions
@@ -185,10 +167,6 @@ Generate the weather analysis now for:
 - Date: ${date}
 
 IMPORTANT: Return ONLY the JSON object, no other text. Be concise but accurate.`;
-
-    // ════════════════════════════════════════════════════════════════
-    // END OF CUSTOM INSTRUCTION SECTION
-    // ════════════════════════════════════════════════════════════════
 
     return customInstructions;
   }

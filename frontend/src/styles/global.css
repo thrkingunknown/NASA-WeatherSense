@@ -137,4 +137,80 @@ button {
   line-height: 1.15;
   margin: 0;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+    background-size: 400px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+  }
+
+  .app-header {
+    padding: var(--spacing-lg);
+  }
+
+  .app-main {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 13px;
+    background-size: 300px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  .app-header {
+    padding: var(--spacing-md);
+  }
+
+  .app-main {
+    padding: var(--spacing-sm);
+  }
+
+  :root {
+    --spacing-xxl: 2rem;
+    --spacing-xl: 1.5rem;
+    --spacing-lg: 1rem;
+  }
 }

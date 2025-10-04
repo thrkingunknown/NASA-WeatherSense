@@ -1,10 +1,3 @@
-/**
- * Tooltip Component
- *
- * Accessible tooltip for explaining technical terms.
- * Shows on hover and focus with smooth animations.
- */
-
 import { useState, useRef, useEffect } from "react";
 import "./Tooltip.css";
 

@@ -5,11 +5,6 @@ import apiRoutes from "./routes/api.routes";
 
 const app: Application = express();
 
-// ════════════════════════════════════════════════════════════════
-// MIDDLEWARE CONFIGURATION
-// ════════════════════════════════════════════════════════════════
-
-// Enable CORS
 app.use(
   cors({
     origin: config.allowedOrigins,
@@ -17,35 +12,24 @@ app.use(
   })
 );
 
-// Parse JSON bodies
 app.use(express.json());
 
-// Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Set request timeout to 90 seconds
 app.use((req: Request, res: Response, next: NextFunction) => {
-  // Set timeout to 90 seconds (90000ms)
   req.setTimeout(90000);
   res.setTimeout(90000);
   next();
 });
 
-// Request logging middleware
 app.use((req: Request, res: Response, next: NextFunction) => {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${req.method} ${req.path}`);
   next();
 });
 
-// ════════════════════════════════════════════════════════════════
-// ROUTES
-// ════════════════════════════════════════════════════════════════
-
-// API routes
 app.use("/api", apiRoutes);
 
-// Root endpoint
 app.get("/", (req: Request, res: Response) => {
   res.json({
     message: "Weather Analysis API - Powered by Gemini",
@@ -58,11 +42,6 @@ app.get("/", (req: Request, res: Response) => {
   });
 });
 
-// ════════════════════════════════════════════════════════════════
-// ERROR HANDLING
-// ════════════════════════════════════════════════════════════════
-
-// 404 handler
 app.use((req: Request, res: Response) => {
   res.status(404).json({
     error: "Not Found",
@@ -70,7 +49,6 @@ app.use((req: Request, res: Response) => {
   });
 });
 
-// Global error handler
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error("Unhandled error:", err);
   res.status(500).json({
@@ -78,10 +56,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     message: err.message || "Something went wrong",
   });
 });
-
-// ════════════════════════════════════════════════════════════════
-// SERVER START
-// ════════════════════════════════════════════════════════════════
 
 const PORT = config.port;
 
