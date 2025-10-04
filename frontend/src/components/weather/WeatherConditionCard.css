@@ -1,0 +1,273 @@
+/**
+ * Weather Condition Card Styles
+ */
+
+.weather-condition-card {
+  background: linear-gradient(
+    135deg,
+    var(--color-deep-blue) 0%,
+    var(--color-electric-blue) 100%
+  );
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  position: relative;
+  overflow: hidden;
+}
+
+.weather-condition-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+
+.weather-condition-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.weather-condition-card:hover::before {
+  opacity: 1;
+}
+
+/* Theme Colors */
+.theme-hot {
+  background: linear-gradient(
+    135deg,
+    var(--color-rocket-red) 0%,
+    var(--color-martian-red) 100%
+  );
+}
+
+.theme-cold {
+  background: linear-gradient(
+    135deg,
+    var(--color-blue-yonder) 0%,
+    var(--color-neon-blue) 100%
+  );
+}
+
+.theme-wet {
+  background: linear-gradient(
+    135deg,
+    var(--color-neon-blue) 0%,
+    var(--color-blue-yonder) 100%
+  );
+}
+
+.theme-windy {
+  background: linear-gradient(
+    135deg,
+    rgba(46, 150, 245, 0.85) 0%,
+    rgba(9, 96, 225, 0.85) 100%
+  );
+}
+
+.theme-uncomfortable {
+  background: linear-gradient(
+    135deg,
+    var(--color-electric-blue) 0%,
+    var(--color-deep-blue) 100%
+  );
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.condition-icon {
+  font-size: 2.5rem;
+  line-height: 1;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.condition-name {
+  color: var(--color-white);
+  font-size: 1.3rem;
+  margin: 0;
+  flex: 1;
+}
+
+/* Likelihood Display */
+.likelihood-display {
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.likelihood-value {
+  font-size: 4rem;
+  font-weight: bold;
+  color: var(--color-white);
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.likelihood-label {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: var(--spacing-xs);
+}
+
+/* Progress Bar */
+.likelihood-bar {
+  width: 100%;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: var(--spacing-lg) 0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.likelihood-bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(234, 254, 7, 0.8),
+    var(--color-neon-yellow)
+  );
+  border-radius: 6px;
+  transition: width 1s ease-out;
+  box-shadow: 0 0 10px rgba(234, 254, 7, 0.5);
+}
+
+/* Risk Badge */
+.risk-badge {
+  align-self: flex-start;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--spacing-md);
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.risk-very-high {
+  color: #c62828;
+}
+
+.risk-high {
+  color: #f57c00;
+}
+
+.risk-moderate {
+  color: #fbc02d;
+}
+
+.risk-low {
+  color: #388e3c;
+}
+
+.risk-very-low {
+  color: #0288d1;
+}
+
+/* Description */
+.condition-description {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: var(--spacing-md);
+  flex: 1;
+}
+
+/* Threshold Info */
+.threshold-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-top: auto;
+}
+
+.threshold-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+}
+
+.threshold-value {
+  color: var(--color-white);
+  font-weight: 600;
+  font-family: monospace;
+}
+
+/* Historical Range */
+.historical-range {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(0, 0, 0, 0.15);
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.range-label {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 500;
+  margin-bottom: var(--spacing-xs);
+}
+
+.range-values {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.range-item {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.8rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .weather-condition-card {
+    min-height: 280px;
+  }
+
+  .likelihood-value {
+    font-size: 3rem;
+  }
+
+  .condition-icon {
+    font-size: 2rem;
+  }
+
+  .condition-name {
+    font-size: 1.1rem;
+  }
+}

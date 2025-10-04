@@ -1,0 +1,212 @@
+/**
+ * Home Page Styles
+ */
+
+.home-page {
+  min-height: 100vh;
+  background: transparent;
+  position: relative;
+}
+
+.page-header {
+  background: linear-gradient(
+    135deg,
+    var(--color-deep-blue) 0%,
+    var(--color-electric-blue) 100%
+  );
+  color: var(--color-white);
+  padding: var(--spacing-xxl) var(--spacing-xl);
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.page-header::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(46, 150, 245, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.page-header::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -5%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(
+    circle,
+    rgba(9, 96, 225, 0.1) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.page-header h1 {
+  color: var(--color-white);
+  margin-bottom: var(--spacing-sm);
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  position: relative;
+  z-index: 1;
+}
+
+.tagline {
+  font-size: 1.2rem;
+  color: var(--color-neon-yellow);
+  margin: 0;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xxl) var(--spacing-xl);
+}
+
+.query-section {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--spacing-xl);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.query-section h2 {
+  color: var(--color-electric-blue);
+  margin-bottom: var(--spacing-lg);
+}
+
+.query-section button {
+  background: linear-gradient(
+    135deg,
+    var(--color-electric-blue) 0%,
+    var(--color-neon-blue) 100%
+  );
+  color: var(--color-white);
+  padding: var(--spacing-md) var(--spacing-xl);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-top: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.query-section button:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-neon-blue) 0%,
+    var(--color-electric-blue) 100%
+  );
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.loading,
+.error {
+  background-color: var(--color-white);
+  border-radius: 8px;
+  padding: var(--spacing-xl);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.error {
+  background-color: #fee;
+  border: 2px solid #c33;
+}
+
+.error h3 {
+  color: #c33;
+  margin-bottom: var(--spacing-sm);
+}
+
+.results-section {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--color-gray-light);
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.results-section h2 {
+  color: var(--color-electric-blue);
+  margin: 0;
+}
+
+.btn-new-query {
+  background-color: var(--color-white);
+  color: var(--color-electric-blue);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 2px solid var(--color-electric-blue);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-new-query:hover {
+  background: linear-gradient(
+    135deg,
+    var(--color-electric-blue) 0%,
+    var(--color-neon-blue) 100%
+  );
+  color: var(--color-white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Trends Section */
+.trends-section {
+  margin-top: var(--spacing-xxl);
+}
+
+.trends-title {
+  color: var(--color-electric-blue);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.trend-chart-wrapper {
+  margin-bottom: var(--spacing-xxl);
+}
+
+.trend-chart-wrapper:last-child {
+  margin-bottom: 0;
+}
+
+/* Weather report now uses WeatherReportDisplay component */
+/* Historical trend now uses HistoricalTrendChart component */

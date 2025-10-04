@@ -1,0 +1,345 @@
+/* Loading Spinner Styles */
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1.5rem;
+}
+
+/* Spinner Container */
+.spinner-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Size Variants */
+.loading-spinner.small .spinner-container {
+  width: 60px;
+  height: 60px;
+}
+
+.loading-spinner.medium .spinner-container {
+  width: 100px;
+  height: 100px;
+}
+
+.loading-spinner.large .spinner-container {
+  width: 140px;
+  height: 140px;
+}
+
+/* Orbit Rings */
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 66, 166, 0.25);
+  animation: orbit-pulse 3s ease-in-out infinite;
+}
+
+.loading-spinner.medium .outer-ring {
+  width: 100%;
+  height: 100%;
+  border-width: 2px;
+  animation-delay: 0s;
+}
+
+.loading-spinner.medium .middle-ring {
+  width: 75%;
+  height: 75%;
+  border-width: 2px;
+  animation-delay: 0.3s;
+}
+
+.loading-spinner.medium .inner-ring {
+  width: 50%;
+  height: 50%;
+  border-width: 2px;
+  animation-delay: 0.6s;
+}
+
+.loading-spinner.small .outer-ring {
+  width: 100%;
+  height: 100%;
+  border-width: 1.5px;
+}
+
+.loading-spinner.small .middle-ring {
+  width: 70%;
+  height: 70%;
+  border-width: 1.5px;
+}
+
+.loading-spinner.small .inner-ring {
+  width: 40%;
+  height: 40%;
+  border-width: 1.5px;
+}
+
+.loading-spinner.large .outer-ring {
+  width: 100%;
+  height: 100%;
+  border-width: 3px;
+}
+
+.loading-spinner.large .middle-ring {
+  width: 75%;
+  height: 75%;
+  border-width: 3px;
+}
+
+.loading-spinner.large .inner-ring {
+  width: 50%;
+  height: 50%;
+  border-width: 3px;
+}
+
+@keyframes orbit-pulse {
+  0%,
+  100% {
+    border-color: rgba(0, 66, 166, 0.25);
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    border-color: rgba(0, 66, 166, 0.6);
+    transform: scale(1.05) rotate(180deg);
+  }
+}
+
+/* Center Globe */
+.spinner-globe {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-electric-blue) 0%,
+    var(--color-deep-blue) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 66, 166, 0.4),
+    inset 0 0 10px rgba(255, 255, 255, 0.2);
+  animation: globe-rotate 4s linear infinite;
+}
+
+.globe-inner {
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: globe-pulse 2s ease-in-out infinite;
+}
+
+@keyframes globe-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes globe-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Satellites */
+.satellite {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-neon-yellow) 0%,
+    #ffd000 100%
+  );
+  box-shadow: 0 0 10px rgba(234, 254, 7, 0.6);
+}
+
+.loading-spinner.small .satellite {
+  width: 5px;
+  height: 5px;
+}
+
+.loading-spinner.large .satellite {
+  width: 10px;
+  height: 10px;
+}
+
+.satellite-1 {
+  animation: orbit-satellite 2s linear infinite;
+}
+
+.satellite-2 {
+  animation: orbit-satellite 3s linear infinite reverse;
+  animation-delay: 0.5s;
+}
+
+.satellite-3 {
+  animation: orbit-satellite 2.5s linear infinite;
+  animation-delay: 1s;
+}
+
+@keyframes orbit-satellite {
+  from {
+    transform: rotate(0deg) translateX(50px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(50px) rotate(-360deg);
+  }
+}
+
+.loading-spinner.small .satellite {
+  animation: orbit-satellite-small 2s linear infinite;
+}
+
+.loading-spinner.small .satellite-2 {
+  animation: orbit-satellite-small 3s linear infinite reverse;
+  animation-delay: 0.5s;
+}
+
+.loading-spinner.small .satellite-3 {
+  animation: orbit-satellite-small 2.5s linear infinite;
+  animation-delay: 1s;
+}
+
+@keyframes orbit-satellite-small {
+  from {
+    transform: rotate(0deg) translateX(30px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(30px) rotate(-360deg);
+  }
+}
+
+.loading-spinner.large .satellite-1 {
+  animation: orbit-satellite-large 2s linear infinite;
+}
+
+.loading-spinner.large .satellite-2 {
+  animation: orbit-satellite-large 3s linear infinite reverse;
+  animation-delay: 0.5s;
+}
+
+.loading-spinner.large .satellite-3 {
+  animation: orbit-satellite-large 2.5s linear infinite;
+  animation-delay: 1s;
+}
+
+@keyframes orbit-satellite-large {
+  from {
+    transform: rotate(0deg) translateX(70px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(70px) rotate(-360deg);
+  }
+}
+
+/* Loading Message */
+.loading-message {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--color-neon-blue);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.loading-spinner.primary .loading-message {
+  color: var(--color-neon-blue);
+}
+
+.loading-spinner.light .loading-message {
+  color: #ffffff;
+}
+
+/* Animated dots */
+.loading-dots {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.loading-dots .dot {
+  animation: dot-pulse 1.4s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+.loading-dots .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-pulse {
+  0%,
+  80%,
+  100% {
+    opacity: 0.4;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Light variant adjustments */
+.loading-spinner.light .orbit-ring {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.loading-spinner.light .spinner-globe {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(46, 150, 245, 0.2) 100%);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4),
+    inset 0 0 10px rgba(0, 66, 166, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loading-spinner {
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+
+  .loading-message {
+    font-size: 1rem;
+  }
+}
