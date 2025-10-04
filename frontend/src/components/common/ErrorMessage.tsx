@@ -17,7 +17,8 @@ interface ErrorMessageProps {
 export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
   // Get error icon based on error type
   const getErrorIcon = (): string => {
-    if (error.statusCode === 0 || error.error.includes("Network")) {
+    const errorString = typeof error.error === "string" ? error.error : "";
+    if (error.statusCode === 0 || errorString.includes("Network")) {
       return "🌐"; // Network error
     }
     if (error.statusCode === 400 || error.statusCode === 422) {
@@ -34,7 +35,8 @@ export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
 
   // Get helpful suggestion based on error type
   const getSuggestion = (): string => {
-    if (error.statusCode === 0 || error.error.includes("Network")) {
+    const errorString = typeof error.error === "string" ? error.error : "";
+    if (error.statusCode === 0 || errorString.includes("Network")) {
       return "Check your internet connection and try again.";
     }
     if (error.statusCode === 400 || error.statusCode === 422) {
@@ -60,7 +62,9 @@ export function ErrorMessage({ error, onRetry, onDismiss }: ErrorMessageProps) {
 
         {/* Error Details */}
         <div className="error-details">
-          <h3 className="error-title">{error.error}</h3>
+          <h3 className="error-title">
+            {typeof error.error === "string" ? error.error : "Error"}
+          </h3>
           <p className="error-description">{error.message}</p>
 
           {/* Status Code Badge */}
