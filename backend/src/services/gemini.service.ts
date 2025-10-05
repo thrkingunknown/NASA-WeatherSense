@@ -15,8 +15,7 @@ export class GeminiService {
         topP: 0.95,
         topK: 40,
         maxOutputTokens: 8192,
-        // Note: responseMimeType "application/json" is incompatible with Google Search grounding
-        // Instead, we rely on prompt instructions to ensure JSON output
+        //responseMimeType "application/json"
       },
       tools: [
         {
@@ -49,7 +48,6 @@ export class GeminiService {
 
       console.log("[Gemini] Successfully received response");
 
-      // Check if Google Search grounding was used
       const groundingMetadata = (response as any).candidates?.[0]
         ?.groundingMetadata;
       if (groundingMetadata) {
@@ -68,10 +66,8 @@ export class GeminiService {
         }
       }
 
-      // Parse JSON response - extract JSON if wrapped in markdown code blocks
       let jsonText = text.trim();
 
-      // Remove markdown code blocks if present
       if (jsonText.startsWith("```json")) {
         jsonText = jsonText.replace(/^```json\s*\n/, "").replace(/\n```$/, "");
       } else if (jsonText.startsWith("```")) {
