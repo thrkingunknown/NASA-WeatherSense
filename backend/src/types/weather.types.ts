@@ -76,6 +76,57 @@ export interface GraphData {
   year_minus_1: number[];
 }
 
+export interface VisualCrossingData {
+  source: string;
+  location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
+  actualData: {
+    temperature: number;
+    temperatureMax: number;
+    temperatureMin: number;
+    feelsLike: number;
+    humidity: number;
+    precipitation: number;
+    precipitationProbability: number;
+    snow: number;
+    snowDepth: number;
+    windSpeed: number;
+    windGust: number;
+    cloudCover: number;
+    uvIndex: number;
+    visibility: number;
+    pressure: number;
+    conditions: string;
+    description: string;
+  };
+  historicalAverages: {
+    temperature: number;
+    precipitation: number;
+    humidity: number;
+    windSpeed: number;
+  };
+  statistics: {
+    temperatureStats: {
+      mean: number;
+      min: number;
+      max: number;
+      standardDeviation: number;
+    };
+    precipitationStats: {
+      totalMean: number;
+      probability: number;
+      maxRecorded: number;
+    };
+    trends: {
+      temperatureTrend: string;
+      precipitationTrend: string;
+    };
+  };
+}
+
 export interface WeatherResponse {
   request_parameters: RequestParameters;
   overall_comfortability_score: ComfortabilityScore;
@@ -85,4 +136,5 @@ export interface WeatherResponse {
   temperature_graph_data: GraphData;
   rain_graph_data: GraphData;
   snow_graph_data: GraphData;
+  visual_crossing_data?: VisualCrossingData;
 }

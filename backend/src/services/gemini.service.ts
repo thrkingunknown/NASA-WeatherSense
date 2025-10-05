@@ -1,6 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { config } from "../config/config";
-import { WeatherQuery, WeatherResponse } from "../types/weather.types";
+import {
+  WeatherQuery,
+  WeatherResponse,
+  VisualCrossingData,
+} from "../types/weather.types";
+import { StatisticalForecast } from "./visualcrossing.service";
 
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
@@ -20,13 +25,16 @@ export class GeminiService {
     });
   }
 
-  async getWeatherAnalysis(query: WeatherQuery): Promise<WeatherResponse> {
+  async getWeatherAnalysis(
+    query: WeatherQuery,
+    vcForecast?: StatisticalForecast
+  ): Promise<WeatherResponse> {
     try {
       console.log(
         `[Gemini] Generating analysis for lat:${query.latitude}, lon:${query.longitude}, date:${query.date}`
       );
 
-      const prompt = this.buildPrompt(query);
+      const prompt = this.buildPrompt(query, vcForecast);
 
       const timeoutPromise = new Promise<never>((_, reject) => {
         setTimeout(
@@ -69,6 +77,37 @@ export class GeminiService {
         throw new Error("Invalid response structure from Gemini");
       }
 
+      if (vcForecast) {
+        const targetDay = vcForecast.current || vcForecast.forecast;
+        if (targetDay) {
+          parsedResponse.visual_crossing_data = {
+            source: "Visual Crossing Weather API",
+            location: vcForecast.location,
+            actualData: {
+              temperature: targetDay.temp,
+              temperatureMax: targetDay.tempmax,
+              temperatureMin: targetDay.tempmin,
+              feelsLike: targetDay.feelslike,
+              humidity: targetDay.humidity,
+              precipitation: targetDay.precip,
+              precipitationProbability: targetDay.precipprob,
+              snow: targetDay.snow,
+              snowDepth: targetDay.snowdepth,
+              windSpeed: targetDay.windspeed,
+              windGust: targetDay.windgust,
+              cloudCover: targetDay.cloudcover,
+              uvIndex: targetDay.uvindex,
+              visibility: targetDay.visibility,
+              pressure: targetDay.pressure,
+              conditions: targetDay.conditions,
+              description: targetDay.description,
+            },
+            historicalAverages: vcForecast.historicalData.monthlyAverages,
+            statistics: vcForecast.statistics,
+          };
+        }
+      }
+
       return parsedResponse as WeatherResponse;
     } catch (error) {
       console.error("Error calling Gemini API:", error);
@@ -81,8 +120,63 @@ export class GeminiService {
     }
   }
 
-  private buildPrompt(query: WeatherQuery): string {
+  private buildPrompt(
+    query: WeatherQuery,
+    vcForecast?: StatisticalForecast
+  ): string {
     const { latitude, longitude, date } = query;
+    let vcDataContext = "";
+    if (vcForecast) {
+      const targetDay = vcForecast.current || vcForecast.forecast;
+      const dataType = vcForecast.current ? "CURRENT/HISTORICAL" : "FORECAST";
+
+      if (targetDay) {
+        vcDataContext = `
+
+REAL WEATHER DATA FROM VISUAL CROSSING API (${dataType} DATA):
+Location: ${vcForecast.location.address}
+Coordinates: ${vcForecast.location.latitude}, ${vcForecast.location.longitude}
+
+CURRENT/FORECAST CONDITIONS:
+- Temperature: ${targetDay.temp}°C (Min: ${targetDay.tempmin}°C, Max: ${targetDay.tempmax}°C)
+- Feels Like: ${targetDay.feelslike}°C
+- Humidity: ${targetDay.humidity}%
+- Precipitation: ${targetDay.precip}mm (Probability: ${targetDay.precipprob}%)
+- Snow: ${targetDay.snow}cm (Depth: ${targetDay.snowdepth}cm)
+- Wind Speed: ${targetDay.windspeed} km/h (Gusts: ${targetDay.windgust} km/h)
+- Cloud Cover: ${targetDay.cloudcover}%
+- UV Index: ${targetDay.uvindex}
+- Visibility: ${targetDay.visibility} km
+- Pressure: ${targetDay.pressure} mb
+- Conditions: ${targetDay.conditions}
+- Description: ${targetDay.description}
+
+HISTORICAL AVERAGES (Past 5 Years):
+- Average Temperature: ${vcForecast.historicalData.monthlyAverages.temperature}°C
+- Average Precipitation: ${vcForecast.historicalData.monthlyAverages.precipitation}mm
+- Average Humidity: ${vcForecast.historicalData.monthlyAverages.humidity}%
+- Average Wind Speed: ${vcForecast.historicalData.monthlyAverages.windspeed} km/h
+
+STATISTICAL ANALYSIS:
+Temperature Statistics:
+- Mean: ${vcForecast.statistics.temperatureStats.mean}°C
+- Min (5yr): ${vcForecast.statistics.temperatureStats.min}°C
+- Max (5yr): ${vcForecast.statistics.temperatureStats.max}°C
+- Std Dev: ${vcForecast.statistics.temperatureStats.standardDeviation}°C
+
+Precipitation Statistics:
+- Mean: ${vcForecast.statistics.precipitationStats.totalMean}mm
+- Probability: ${vcForecast.statistics.precipitationStats.probability}%
+- Max Recorded: ${vcForecast.statistics.precipitationStats.maxRecorded}mm
+
+Trends:
+- Temperature Trend: ${vcForecast.statistics.trends.temperatureTrend}
+- Precipitation Trend: ${vcForecast.statistics.trends.precipitationTrend}
+
+USE THIS REAL DATA as the primary source for your analysis. Ensure your specific_variables match this data closely. You can supplement with additional NASA/MERRA-2/ERA5 data for air quality, dust concentration, and other environmental factors not provided by Visual Crossing.
+`;
+      }
+    }
 
     const customInstructions = `
 AI Agent System Instructions
@@ -98,7 +192,7 @@ CRITICAL JSON RULES:
 - Ensure all arrays have at least empty brackets []
 - Ensure all strings are properly quoted
 - The output must pass JSON.parse() without errors
-
+${vcDataContext}
 Data Handling:
 Past/Present Dates: If the provided date is in the past or is the current date, you must retrieve and provide actual historical or current data.
 Future Dates: If the provided date is in the future, you must generate a prediction based on a thorough analysis of historical data, trends, and climatological models for the specified location and time of year.
@@ -162,29 +256,38 @@ Your output must conform to the following structure. Provide a null value for an
   },
   "temperature_graph_data": {
     "description": "Quarterly average temperatures in Celsius for the past 5 years. Each year contains [Q1_avg, Q2_avg, Q3_avg, Q4_avg].",
-    "year_minus_5": [],
-    "year_minus_4": [],
-    "year_minus_3": [],
-    "year_minus_2": [],
-    "year_minus_1": []
+    "year_minus_5": [15.2, 23.5, 28.9, 18.7],
+    "year_minus_4": [14.8, 24.1, 29.2, 19.1],
+    "year_minus_3": [15.5, 23.8, 28.5, 18.3],
+    "year_minus_2": [15.9, 24.5, 29.8, 19.5],
+    "year_minus_1": [15.1, 23.2, 28.1, 18.9]
   },
   "rain_graph_data": {
     "description": "Quarterly total rainfall in mm for the past 5 years. Each year contains [Q1_total, Q2_total, Q3_total, Q4_total].",
-    "year_minus_5": [],
-    "year_minus_4": [],
-    "year_minus_3": [],
-    "year_minus_2": [],
-    "year_minus_1": []
+    "year_minus_5": [120, 80, 45, 95],
+    "year_minus_4": [135, 75, 50, 105],
+    "year_minus_3": [110, 85, 40, 90],
+    "year_minus_2": [125, 90, 55, 100],
+    "year_minus_1": [130, 70, 48, 110]
   },
   "snow_graph_data": {
     "description": "Quarterly total snowfall in cm for the past 5 years. Each year contains [Q1_total, Q2_total, Q3_total, Q4_total].",
-    "year_minus_5": [],
-    "year_minus_4": [],
-    "year_minus_3": [],
-    "year_minus_2": [],
-    "year_minus_1": []
+    "year_minus_5": [0, 0, 0, 0],
+    "year_minus_4": [0, 0, 0, 0],
+    "year_minus_3": [0, 0, 0, 0],
+    "year_minus_2": [0, 0, 0, 0],
+    "year_minus_1": [0, 0, 0, 0]
   }
 }
+
+CRITICAL INSTRUCTIONS FOR GRAPH DATA:
+- The graph data arrays MUST contain actual numerical values, NOT empty arrays
+- Each year array must have EXACTLY 4 numbers representing quarterly data: [Q1, Q2, Q3, Q4]
+- Q1 = Jan-Mar, Q2 = Apr-Jun, Q3 = Jul-Sep, Q4 = Oct-Dec
+- Use historical climate data for the specified location to populate these arrays
+- If no snow occurs in this location, use [0, 0, 0, 0] for all snow years
+- Example valid format: "year_minus_1": [15.2, 23.5, 28.9, 18.7]
+- NEVER return empty arrays like "year_minus_1": []
 
 Generate the weather analysis now for:
 - Latitude: ${latitude}
@@ -194,9 +297,10 @@ Generate the weather analysis now for:
 IMPORTANT: 
 1. Return ONLY the JSON object, no other text. 
 2. Be concise but accurate.
-3. EVERY property MUST have a valid value - use null, [], or 0 if data is unavailable.
+3. EVERY property MUST have a valid value - ESPECIALLY graph data arrays must have 4 numbers each
 4. NEVER output incomplete properties like "property":, or "property":}
-5. Your response must be parseable by JSON.parse() without any errors.`;
+5. Graph arrays must have exactly 4 numerical values: [Q1, Q2, Q3, Q4]
+6. Your response must be parseable by JSON.parse() without any errors.`;
 
     return customInstructions;
   }

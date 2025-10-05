@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { geminiService } from "../services/gemini.service";
+import { visualCrossingService } from "../services/visualcrossing.service";
 import { WeatherQuery } from "../types/weather.types";
 
 export class WeatherController {
@@ -65,8 +66,30 @@ export class WeatherController {
         date,
       };
 
+      console.log(
+        "[Controller] Fetching Visual Crossing statistical forecast..."
+      );
+      let vcForecast;
+      try {
+        vcForecast = await visualCrossingService.getStatisticalForecast(
+          latitude,
+          longitude,
+          date
+        );
+        console.log("[Controller] Visual Crossing data retrieved successfully");
+      } catch (vcError) {
+        console.warn(
+          "[Controller] Visual Crossing API failed, proceeding without it:",
+          vcError instanceof Error ? vcError.message : "Unknown error"
+        );
+        // Continue without Visual Crossing data
+      }
+
       console.log("[Controller] Calling Gemini service...");
-      const weatherData = await geminiService.getWeatherAnalysis(weatherQuery);
+      const weatherData = await geminiService.getWeatherAnalysis(
+        weatherQuery,
+        vcForecast
+      );
       console.log("[Controller] Gemini service completed successfully");
 
       res.status(200).json(weatherData);

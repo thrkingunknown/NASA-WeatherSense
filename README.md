@@ -56,6 +56,8 @@ This project was developed for the **NASA Space Apps Challenge**, focusing on ma
 - **Node.js & Express 5.1** - Server framework
 - **TypeScript 5.6** - Type-safe backend development
 - **Google Gemini AI** - Advanced AI capabilities
+- **Visual Crossing Weather API** - Real weather data and statistical forecasts
+- **Axios** - HTTP client for API requests
 - **CORS** - Cross-origin resource sharing
 - **dotenv** - Environment variable management
 - **Google Search Grounding** - Real-time web data integration for accurate weather insights
@@ -154,11 +156,20 @@ You'll also need API keys for:
    ```
 
 3. Edit `.env` and add your credentials:
+
    ```env
    PORT=3001
    GEMINI_API_KEY=your_gemini_api_key_here
+   VISUAL_CROSSING_API_KEY=your_visual_crossing_api_key_here
    ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
    ```
+
+   **Get API Keys:**
+
+   - **Gemini AI**: [Get API Key](https://makersuite.google.com/app/apikey)
+   - **Visual Crossing**: [Get API Key](https://www.visualcrossing.com/weather-api) (Free tier: 1000 records/day)
+
+   📖 **Visual Crossing Integration**: See [VISUAL_CROSSING_INTEGRATION.md](./VISUAL_CROSSING_INTEGRATION.md) for detailed documentation.
 
 ### Frontend Configuration
 
