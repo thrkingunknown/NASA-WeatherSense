@@ -15,13 +15,8 @@ export class GeminiService {
         topP: 0.95,
         topK: 40,
         maxOutputTokens: 8192,
-        //responseMimeType "application/json"
+        responseMimeType: "application/json",
       },
-      tools: [
-        {
-          googleSearch: {},
-        } as any,
-      ],
     });
   }
 
@@ -47,24 +42,6 @@ export class GeminiService {
       const text = response.text();
 
       console.log("[Gemini] Successfully received response");
-
-      const groundingMetadata = (response as any).candidates?.[0]
-        ?.groundingMetadata;
-      if (groundingMetadata) {
-        console.log("[Gemini] Response was grounded with Google Search");
-        if (groundingMetadata.webSearchQueries) {
-          console.log(
-            "[Gemini] Search queries used:",
-            groundingMetadata.webSearchQueries
-          );
-        }
-        if (groundingMetadata.groundingChunks) {
-          console.log(
-            "[Gemini] Number of grounding sources:",
-            groundingMetadata.groundingChunks.length
-          );
-        }
-      }
 
       let jsonText = text.trim();
 
