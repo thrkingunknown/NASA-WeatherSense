@@ -58,6 +58,7 @@ This project was developed for the **NASA Space Apps Challenge**, focusing on ma
 - **Google Gemini AI** - Advanced AI capabilities
 - **CORS** - Cross-origin resource sharing
 - **dotenv** - Environment variable management
+- **Google Search Grounding** - Real-time web data integration for accurate weather insights
 
 ### Development Tools
 

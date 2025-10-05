@@ -9,14 +9,20 @@ export class GeminiService {
 
   constructor() {
     this.model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
+      model: "gemini-flash-latest",
       generationConfig: {
         temperature: 0.7,
         topP: 0.95,
         topK: 40,
         maxOutputTokens: 8192,
-        responseMimeType: "application/json",
+        // Note: responseMimeType "application/json" is incompatible with Google Search grounding
+        // Instead, we rely on prompt instructions to ensure JSON output
       },
+      tools: [
+        {
+          googleSearch: {},
+        } as any,
+      ],
     });
   }
 
@@ -43,7 +49,36 @@ export class GeminiService {
 
       console.log("[Gemini] Successfully received response");
 
-      const parsedResponse = JSON.parse(text);
+      // Check if Google Search grounding was used
+      const groundingMetadata = (response as any).candidates?.[0]
+        ?.groundingMetadata;
+      if (groundingMetadata) {
+        console.log("[Gemini] Response was grounded with Google Search");
+        if (groundingMetadata.webSearchQueries) {
+          console.log(
+            "[Gemini] Search queries used:",
+            groundingMetadata.webSearchQueries
+          );
+        }
+        if (groundingMetadata.groundingChunks) {
+          console.log(
+            "[Gemini] Number of grounding sources:",
+            groundingMetadata.groundingChunks.length
+          );
+        }
+      }
+
+      // Parse JSON response - extract JSON if wrapped in markdown code blocks
+      let jsonText = text.trim();
+
+      // Remove markdown code blocks if present
+      if (jsonText.startsWith("```json")) {
+        jsonText = jsonText.replace(/^```json\s*\n/, "").replace(/\n```$/, "");
+      } else if (jsonText.startsWith("```")) {
+        jsonText = jsonText.replace(/^```\s*\n/, "").replace(/\n```$/, "");
+      }
+
+      const parsedResponse = JSON.parse(jsonText);
 
       if (
         !parsedResponse.overall_comfortability_score ||
