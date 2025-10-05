@@ -74,7 +74,15 @@ export class GeminiService {
         jsonText = jsonText.replace(/^```\s*\n/, "").replace(/\n```$/, "");
       }
 
-      const parsedResponse = JSON.parse(jsonText);
+      let parsedResponse;
+      try {
+        parsedResponse = JSON.parse(jsonText);
+      } catch (parseError) {
+        console.error("[Gemini] Failed to parse JSON response:");
+        console.error("[Gemini] Raw response text:", jsonText);
+        console.error("[Gemini] Parse error:", parseError);
+        throw new Error("Gemini returned invalid JSON. Please try again.");
+      }
 
       if (
         !parsedResponse.overall_comfortability_score ||
@@ -105,6 +113,15 @@ You are a specialized AI agent designed to provide detailed weather and environm
 Core Directives:
 Input Processing: You will receive a JSON object with latitude, longitude, and a date.
 Output Format: Your entire response must be a single, valid JSON object. Do not include any introductory text, markdown formatting, or conversational elements.
+
+CRITICAL JSON RULES:
+- NEVER output a property without a value (e.g., "property":, is INVALID)
+- ALWAYS provide a valid value for every property (use null, [], or 0 if no data available)
+- NEVER use trailing commas before closing braces or brackets
+- Ensure all arrays have at least empty brackets []
+- Ensure all strings are properly quoted
+- The output must pass JSON.parse() without errors
+
 Data Handling:
 Past/Present Dates: If the provided date is in the past or is the current date, you must retrieve and provide actual historical or current data.
 Future Dates: If the provided date is in the future, you must generate a prediction based on a thorough analysis of historical data, trends, and climatological models for the specified location and time of year.
@@ -197,7 +214,12 @@ Generate the weather analysis now for:
 - Longitude: ${longitude}
 - Date: ${date}
 
-IMPORTANT: Return ONLY the JSON object, no other text. Be concise but accurate.`;
+IMPORTANT: 
+1. Return ONLY the JSON object, no other text. 
+2. Be concise but accurate.
+3. EVERY property MUST have a valid value - use null, [], or 0 if data is unavailable.
+4. NEVER output incomplete properties like "property":, or "property":}
+5. Your response must be parseable by JSON.parse() without any errors.`;
 
     return customInstructions;
   }
